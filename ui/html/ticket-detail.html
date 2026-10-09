@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>工单详情 - LWOM 轻量工单管理平台</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="layout">
+  <!-- 侧边栏 -->
+  <aside class="sidebar">
+    <div class="logo">LWO<span class="m">M</span></div>
+    <ul class="menu">
+      <li><a class="active" href="ticket-list.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>工单列表</a></li>
+      <li><a href="ticket-new.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>新建工单</a></li>
+      <li><a href="dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="20" x2="6" y2="12"/><line x1="12" y1="20" x2="12" y2="6"/><line x1="18" y1="20" x2="18" y2="14"/></svg>数据看板</a></li>
+      <li><a href="user-management.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>用户管理</a></li>
+      <li><a href="system-settings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/></svg>系统设置</a></li>
+    </ul>
+  </aside>
+
+  <!-- 主区域 -->
+  <div class="main">
+    <header class="topbar">
+      <h1>工单列表</h1>
+      <div class="topbar-right">
+        <span class="bell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><i class="dot"></i></span>
+        <span class="user-chip"><span class="avatar"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5z"/></svg></span>管理员</span>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="breadcrumb"><a href="ticket-list.html">工单管理</a><span class="sep">/</span>工单详情</div>
+
+      <div class="detail-head">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between;">
+          <div>
+            <h2>研发部打印机无法联网</h2>
+            <div class="meta">工单编号: <b>WO-20261009-001</b>　类型: <b>报修</b>　优先级: <b>高</b></div>
+          </div>
+          <div class="ops">
+            <button class="btn btn-outline-blue">分配处理人</button>
+            <button class="btn btn-outline-red">关闭工单</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-grid">
+        <!-- 左侧主栏 -->
+        <div class="detail-main">
+          <div class="card">
+            <h3>基本信息</h3>
+            <div class="info-grid">
+              <div class="info-item"><div class="lb">提交人</div><div class="val">王经理</div></div>
+              <div class="info-item"><div class="lb">提交时间</div><div class="val">2026-10-09 09:12</div></div>
+              <div class="info-item"><div class="lb">处理人</div><div class="val">张工</div></div>
+              <div class="info-item"><div class="lb">工单类型</div><div class="val">报修</div></div>
+              <div class="info-item"><div class="lb">优先级</div><div class="val red">高</div></div>
+              <div class="info-item"><div class="lb">当前状态</div><div class="val orange">处理中</div></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>问题描述</h3>
+            <div class="desc-text">研发部三楼打印机无法连接公司内网，Ping 网关超时，重启后仍无法联网，影响日常报销单打印，请尽快排查网络或安排更换设备。</div>
+          </div>
+
+          <div class="card">
+            <h3>附件 (2)</h3>
+            <div class="file-row">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              报障截图.png<span class="size">1.2 MB</span>
+            </div>
+            <div class="file-row">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              网络配置.pdf<span class="size">0.8 MB</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>操作记录（审计日志）</h3>
+            <div class="audit-note">系统记录每一次工单变更，操作日志永久保留且不可删除</div>
+            <div class="timeline">
+              <div class="tl-item">
+                <span class="tl-dot dot-blue"></span>
+                <div class="tl-body">
+                  <div class="txt">张工 将工单状态由【新建】调整为【处理中】</div>
+                  <div class="time">2026-10-09 09:30 · 操作人：张工</div>
+                </div>
+              </div>
+              <div class="tl-item">
+                <span class="tl-dot dot-green"></span>
+                <div class="tl-body">
+                  <div class="txt">张工 备注：已重启交换机，打印机恢复联网，等待用户确认</div>
+                  <div class="time">2026-10-09 10:15 · 操作人：张工</div>
+                </div>
+              </div>
+              <div class="tl-item">
+                <span class="tl-dot dot-purple"></span>
+                <div class="tl-body">
+                  <div class="txt">王经理 将工单状态由【处理中】调整为【待确认】</div>
+                  <div class="time">2026-10-09 10:40 · 操作人：王经理</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右侧栏 -->
+        <div class="detail-side">
+          <div class="card side-status">
+            <h3>当前状态</h3>
+            <div class="cur"><span class="tag tag-orange">处理中</span></div>
+            <div class="flow-to">可流转至</div>
+            <button class="btn btn-primary">流转至:待确认</button>
+            <button class="btn btn-outline-red">关闭工单</button>
+            <div class="note">状态流转受权限约束，不可跳过阶段直接关闭</div>
+          </div>
+
+          <div class="card">
+            <h3>处理人</h3>
+            <div class="handler">
+              <span class="avatar"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5z"/></svg></span>
+              <div><div class="name">张工</div><div class="team">运维一组</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

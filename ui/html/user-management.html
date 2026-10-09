@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>用户管理 - LWOM 轻量工单管理平台</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="layout">
+  <!-- 侧边栏 -->
+  <aside class="sidebar">
+    <div class="logo">LWO<span class="m">M</span></div>
+    <ul class="menu">
+      <li><a href="ticket-list.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>工单列表</a></li>
+      <li><a href="ticket-new.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>新建工单</a></li>
+      <li><a href="dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="20" x2="6" y2="12"/><line x1="12" y1="20" x2="12" y2="6"/><line x1="18" y1="20" x2="18" y2="14"/></svg>数据看板</a></li>
+      <li><a class="active" href="user-management.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>用户管理</a></li>
+      <li><a href="system-settings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/></svg>系统设置</a></li>
+    </ul>
+  </aside>
+
+  <!-- 主区域 -->
+  <div class="main">
+    <header class="topbar">
+      <h1>工单列表</h1>
+      <div class="topbar-right">
+        <span class="bell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><i class="dot"></i></span>
+        <span class="user-chip"><span class="avatar"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5z"/></svg></span>管理员</span>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="page-head">
+        <h2>用户管理</h2>
+        <span class="meta">共 3 个用户 · 3 类角色</span>
+      </div>
+
+      <!-- 筛选栏 -->
+      <div class="filter-bar">
+        <span class="inline"><label>角色</label><input type="text" value="全部" style="width:100px"></span>
+        <span class="inline"><label>状态</label><input type="text" value="全部" style="width:100px"></span>
+        <span class="inline"><label>用户名</label><input type="text" placeholder="请输入用户名" style="width:150px"></span>
+        <div class="filter-actions">
+          <button class="btn btn-primary btn-sm">查询</button>
+          <button class="btn btn-sm">重置</button>
+        </div>
+      </div>
+
+      <!-- 用户列表 -->
+      <div class="card table-card">
+        <div class="table-toolbar">
+          <button class="btn btn-primary btn-sm">新增用户</button>
+          <button class="btn btn-sm">导出 Excel</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th style="width:120px">用户名</th>
+              <th style="width:120px">姓名</th>
+              <th style="width:120px">角色</th>
+              <th style="width:110px">状态</th>
+              <th style="width:160px">创建时间</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>admin</td>
+              <td>张伟</td>
+              <td><span class="tag tag-purple">管理员</span></td>
+              <td><span class="tag tag-green">正常</span></td>
+              <td>2026-08-01 09:20</td>
+              <td><a class="link-blue" href="#">编辑</a><a class="link-red" href="#">删除</a></td>
+            </tr>
+            <tr>
+              <td>ops01</td>
+              <td>李娜</td>
+              <td><span class="tag tag-teal">运维</span></td>
+              <td><span class="tag tag-green">正常</span></td>
+              <td>2026-08-15 14:05</td>
+              <td><a class="link-blue" href="#">编辑</a><a class="link-red" href="#">删除</a></td>
+            </tr>
+            <tr>
+              <td>user01</td>
+              <td>王芳</td>
+              <td><span class="tag tag-plain">普通用户</span></td>
+              <td><span class="tag tag-red">已禁用</span></td>
+              <td>2026-09-02 11:40</td>
+              <td><a class="link-blue" href="#">编辑</a><a class="link-red" href="#">删除</a></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="table-footer">
+          <span>共 3 条</span>
+          <span>1 / 1</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

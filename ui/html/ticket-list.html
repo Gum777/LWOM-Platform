@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>工单列表 - LWOM 轻量工单管理平台</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="layout">
+  <!-- 侧边栏 -->
+  <aside class="sidebar">
+    <div class="logo">LWO<span class="m">M</span></div>
+    <ul class="menu">
+      <li><a class="active" href="ticket-list.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>工单列表</a></li>
+      <li><a href="ticket-new.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>新建工单</a></li>
+      <li><a href="dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="20" x2="6" y2="12"/><line x1="12" y1="20" x2="12" y2="6"/><line x1="18" y1="20" x2="18" y2="14"/></svg>数据看板</a></li>
+      <li><a href="user-management.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>用户管理</a></li>
+      <li><a href="system-settings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/></svg>系统设置</a></li>
+    </ul>
+  </aside>
+
+  <!-- 主区域 -->
+  <div class="main">
+    <header class="topbar">
+      <h1>工单列表</h1>
+      <div class="topbar-right">
+        <span class="bell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><i class="dot"></i></span>
+        <span class="user-chip"><span class="avatar"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5z"/></svg></span>管理员</span>
+      </div>
+    </header>
+
+    <div class="content">
+      <!-- 筛选栏 -->
+      <div class="filter-bar">
+        <div class="filter-item">
+          <label>状态</label>
+          <span class="select-wrap"><select><option>全部</option><option>新建</option><option>处理中</option><option>待确认</option><option>已关闭</option></select></span>
+        </div>
+        <div class="filter-item">
+          <label>类型</label>
+          <span class="select-wrap"><select><option>全部</option><option>报修</option><option>需求咨询</option><option>其他</option></select></span>
+        </div>
+        <div class="filter-item">
+          <label>创建时间</label>
+          <span class="select-wrap"><select style="min-width:170px"><option>请选择日期范围</option></select></span>
+        </div>
+        <div class="filter-item">
+          <label>搜索</label>
+          <span class="inline"><input type="text" placeholder="搜索工单标题/编号" style="width:190px"></span>
+        </div>
+        <div class="filter-actions">
+          <button class="btn btn-primary btn-sm">查询</button>
+          <button class="btn btn-sm">重置</button>
+        </div>
+      </div>
+
+      <!-- 工单列表 -->
+      <div class="card table-card">
+        <div class="table-toolbar">
+          <span class="title">工单列表<small>( 共 128 条 )</small></span>
+          <span class="ops">
+            <a class="btn btn-primary btn-sm" href="ticket-new.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>新建工单</a>
+            <button class="btn btn-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>导出 Excel</button>
+          </span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th style="width:130px">工单编号</th>
+              <th>标题</th>
+              <th style="width:80px">类型</th>
+              <th style="width:80px">优先级</th>
+              <th style="width:80px">状态</th>
+              <th style="width:90px">处理人</th>
+              <th style="width:130px">创建时间</th>
+              <th style="width:110px">操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>WO-20261009-001</td>
+              <td>研发部打印机无法联网</td>
+              <td>报修</td>
+              <td><span class="tag tag-red">高</span></td>
+              <td><span class="tag tag-orange">处理中</span></td>
+              <td>张工</td>
+              <td>2026-10-09 09:12</td>
+              <td><a class="link-blue" href="ticket-detail.html">查看</a><a class="link-orange" href="#">处理</a></td>
+            </tr>
+            <tr>
+              <td>WO-20261009-002</td>
+              <td>财务系统登录异常</td>
+              <td>报修</td>
+              <td><span class="tag tag-yellow">中</span></td>
+              <td><span class="tag tag-purple">待确认</span></td>
+              <td>李工</td>
+              <td>2026-10-09 10:31</td>
+              <td><a class="link-blue" href="ticket-detail.html">查看</a><a class="link-blue" href="#">确认</a></td>
+            </tr>
+            <tr>
+              <td>WO-20261009-003</td>
+              <td>新增测试环境服务器申请</td>
+              <td>需求咨询</td>
+              <td><span class="tag tag-green">低</span></td>
+              <td><span class="tag tag-blue">新建</span></td>
+              <td class="td-muted">未分配</td>
+              <td>2026-10-09 11:05</td>
+              <td><a class="link-blue" href="ticket-detail.html">查看</a><a class="link-blue" href="#">分配</a></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="table-footer">
+          <span>共 128 条</span>
+          <span class="pager">
+            <a href="#">‹</a>
+            <a class="on" href="#">1</a>
+            <a href="#">2</a>
+            <a href="#">3</a>
+            <a href="#">›</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

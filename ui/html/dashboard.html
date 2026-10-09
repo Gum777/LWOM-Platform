@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数据看板 - LWOM 轻量工单管理平台</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="layout">
+  <!-- 侧边栏 -->
+  <aside class="sidebar">
+    <div class="logo">LWO<span class="m">M</span></div>
+    <ul class="menu">
+      <li><a href="ticket-list.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>工单列表</a></li>
+      <li><a href="ticket-new.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>新建工单</a></li>
+      <li><a class="active" href="dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="20" x2="6" y2="12"/><line x1="12" y1="20" x2="12" y2="6"/><line x1="18" y1="20" x2="18" y2="14"/></svg>数据看板</a></li>
+      <li><a href="user-management.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>用户管理</a></li>
+      <li><a href="system-settings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/></svg>系统设置</a></li>
+    </ul>
+  </aside>
+
+  <!-- 主区域 -->
+  <div class="main">
+    <header class="topbar">
+      <h1>工单列表</h1>
+      <div class="topbar-right">
+        <span class="bell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><i class="dot"></i></span>
+        <span class="user-chip"><span class="avatar"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5z"/></svg></span>管理员</span>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="page-head">
+        <h2>数据看板</h2>
+        <span class="meta">数据更新于 2026-10-09 10:30</span>
+      </div>
+
+      <!-- 统计卡片 -->
+      <div class="stat-row">
+        <div class="stat-card">
+          <div class="lb">总工单数</div>
+          <div class="num">128</div>
+          <div class="sub">本月新增 18</div>
+        </div>
+        <div class="stat-card">
+          <div class="lb">待处理</div>
+          <div class="num">23</div>
+          <div class="sub">新建 8 · 处理中 11 · 待确认 4</div>
+        </div>
+        <div class="stat-card">
+          <div class="lb">处理中</div>
+          <div class="num">11</div>
+          <div class="sub">平均处理时长 4.2h</div>
+        </div>
+        <div class="stat-card">
+          <div class="lb">已关闭</div>
+          <div class="num">105</div>
+          <div class="sub">关闭率 82.0%</div>
+        </div>
+      </div>
+
+      <!-- 图表卡片（纯 CSS 条形图） -->
+      <div class="chart-row">
+        <div class="card">
+          <h3>工单类型分布</h3>
+          <div class="hbar-item">
+            <span class="lb">报修</span>
+            <span class="track"><span class="fill" style="width:100%; background:#1677ff;"></span></span>
+            <span class="num">62</span>
+          </div>
+          <div class="hbar-item">
+            <span class="lb">需求咨询</span>
+            <span class="track"><span class="fill" style="width:66%; background:#52c41a;"></span></span>
+            <span class="num">41</span>
+          </div>
+          <div class="hbar-item">
+            <span class="lb">其他</span>
+            <span class="track"><span class="fill" style="width:40%; background:#faad14;"></span></span>
+            <span class="num">25</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>工单状态分布</h3>
+          <div class="sbar-item">
+            <span class="lb">新建</span>
+            <span class="pill" style="width:6%;  min-width:34px; background:#1677ff;"></span>
+            <span class="num">8</span>
+          </div>
+          <div class="sbar-item">
+            <span class="lb">处理中</span>
+            <span class="pill" style="width:8%;  min-width:44px; background:#d46b08;"></span>
+            <span class="num">11</span>
+          </div>
+          <div class="sbar-item">
+            <span class="lb">待确认</span>
+            <span class="pill" style="width:5%;  min-width:30px; background:#531dab;"></span>
+            <span class="num">4</span>
+          </div>
+          <div class="sbar-item">
+            <span class="lb">已关闭</span>
+            <span class="pill" style="width:78%; background:#8c8c8c;"></span>
+            <span class="num">105</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
