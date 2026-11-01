@@ -20,12 +20,13 @@ CREATE TABLE tickets(
 	ticket_no varchar(20) NOT NULL UNIQUE,
 	title varchar(200) NOT NULL,
 	type varchar(20) NOT NULL CHECK(type IN('保修','咨询','其它')),
-	priority varchar(10) NOT NULL DEFAULT '中' CHECK(priority('高','中','低')), -- 优先级
+	priority varchar(10) NOT NULL DEFAULT '中' CHECK(priority IN('高','中','低')), -- 优先级
 	status varchar(20) NOT NULL DEFAULT '新建' CHECK(status IN('新建','处理中','待确认','已关闭')),
 	submitter_id int NOT NULL REFERENCES users(id), -- 提交人
 	handler_id int REFERENCES users(id), -- 处理人
 	description text,
-	created_at timestamp NOT NULL DEFAULT now()
+	created_at timestamp NOT NULL DEFAULT now(),
+	updated_at timestamp NOT NULL DEFAULT now()
 );
 
 -- 操作记录表
