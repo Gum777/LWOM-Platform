@@ -1,7 +1,7 @@
-﻿pgdata-lwom/
+pgdata-lwom/
 1.txt
 LWOM-项目立项书.md
 .vscode/
-backend/app/_pycache_/
+backend/app/__pycache__/
 backend/data/
 *.pyc
