@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from app.db import init_db,ensure_admin
-from app.auth import router as auth_router
+from app.router.auth import router as auth_router
+
 
 app = FastAPI(title="轻量工单管理平台")
 
