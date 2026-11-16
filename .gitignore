@@ -6,3 +6,4 @@ backend/app/__pycache__/
 backend/data/
 *.pyc
 .trae/
+开发记录.md
