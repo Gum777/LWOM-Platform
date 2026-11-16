@@ -6,10 +6,159 @@
     <title>工单列表 - 轻量工单管理平台</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
-<body class="login-page">
-    <div class="login-card">
-        <h1 class="login-title">工单列表</h1>
-        <p class="login-sub">登录成功后的主页面，内容请稍后</p>
-    </div>    
+<aside class="sidebar">
+    <div class="sidebar-logo">LWO<span>M</span></div>
+    <ul class="sidebar-menu">
+        <li>
+            <a class="active" href="index.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <line x1="4" y1="6" x2="20" y2="6"/>
+                    <line x1="4" y1="12" x2="20" y2="12"/>
+                    <line x1="4" y1="18" x2="20" y2="19"/>
+                </svg>
+                工单列表
+            </a>
+        </li>
+        <li>
+            <a href="#">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                新建工单
+            </a>
+        </li>
+        <li>
+            <a href="#">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <line x1="6" y1="20" x2="6" y2="12"/>
+                    <line x1="12" y1="20" x2="12" y2="6"/>
+                    <line x1="18" y1="20" x2="18" y2="14"/>
+                </svg>
+                数据看板
+            </a>
+        </li>
+        <li>
+            <a href="#">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="7" r="4"/>
+                </svg>
+                用户管理
+            </a>
+        </li>
+        <li>
+            <a href="#">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M12 2v3M12 19v3M2 12h3M19 12h3
+                            M4.9 4.9l2.1 2.1M17 17l2.1 2.1
+                            M19.1 4.9L17 7M7 17l-2.1 2.1" />
+                </svg>
+                系统设置
+            </a>
+        </li>
+    </ul>
+</aside>
+
+<body class="list-page">
+    <header class="topbar">
+       <h1>工单列表</h1>
+
+       <div class="topbar-right">
+
+        <span class="bell">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/> <path d="M13.7 21a2 2 0 0 1-3.4 0"/>
+            </svg>
+            <i class="dot"></i>
+        </span>
+
+        <span class="user-chip">
+            <span class="avatar">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx ="12" cy="8" r="4"/>
+                    <path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5z"/>
+                </svg>
+            </span>
+            <span id="userInfo">--</span>
+        </span>
+
+        <button class="logout-btn" id="logoutBtn">退出</button>
+
+       </div>
+    </header>
+
+    <main class="page-main">
+        <div class="filter-bar">
+            <label class="filter-item">
+                <span>状态</span>
+                <select id="statusFilter">
+                    <option value="">全部</option>
+                    <option value="新建">新建</option>
+                    <option value="处理中">处理中</option>
+                    <option value="待确认">待确认</option>
+                    <option value="已关闭">已关闭</option>
+                </select>
+            </label>
+
+            <label class="filter-item">
+                <span>类型</span>
+                <select id="typeFilter">
+                    <option value="">全部</option>
+                    <option value="保修">保修</option>
+                    <option value="咨询">咨询</option>
+                    <option value="其它">其它</option>
+                </select>
+            </label>
+
+            <label class="filter-item">
+                <span>创建时间</span>
+                <select id="dataFilter">
+                    <option value="">请选择日期范围</option>
+                </select>
+            </label>
+
+            <label class="filter-item">
+                <span>搜索</span>
+                <input type="text" id="keywordInput" placeholder="搜索工单标题/编号">
+            </label>
+
+            <button class="btn-primary" id="searchBtn">查询</button>
+
+            <button class="btn-plain" id="resetBtn">重置</button>
+
+        </div>
+
+        <div class="page-card table-card">
+            <div class="table-toolbar"> 
+                <div class="table-title">工单列表<span class = "table-count" id="totalCount">(共0条)</span></div>
+                <div class="table-actions">
+                    <button class="btn-primary" id="createBtn">+ 新建工单</button>
+                    <button class="btn-plain" id="exportBtn">导出 Excel</button>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>工单编号</th>
+                        <th>标题</th>
+                        <th>类型</th>
+                        <th>优先级</th>
+                        <th>状态</th>
+                        <th>处理人</th>
+                        <th>创建时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="ticketBody">
+                    <tr>
+                        <td colspan="8" class="page-empty">暂无工单</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script src="../js/index.js" defer></script>
 </body>
 </html>
