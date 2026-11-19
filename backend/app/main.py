@@ -4,7 +4,8 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
 from app.db import init_db,ensure_admin
-from app.router.auth import router as auth_router
+from app.routers.auth import router as auth_router
+from app.routers.tickets import router as tickets_router
 
 
 app = FastAPI(title="轻量工单管理平台")
@@ -12,6 +13,8 @@ app = FastAPI(title="轻量工单管理平台")
 init_db()
 
 ensure_admin()
+
+app.include_router(tickets_router)
 
 app.include_router(auth_router)
 

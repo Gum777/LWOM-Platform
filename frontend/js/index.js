@@ -21,6 +21,20 @@ if (user) {
     userInfo.textContent = user.real_name || user.username;
 }
 
+if(token) {
+    fetch("/api/auth/me", {
+        headers: {
+            "Authorization":"Bearer " + token
+        }
+    }).then(function(response){
+        if (response.status === 401) {
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            window.location.href = "login.html"
+        }
+    })
+}
+
 logoutBtn.addEventListener("click",function() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
