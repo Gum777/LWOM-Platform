@@ -13,4 +13,4 @@ BASE_DIR = get_base_dir()
 DATA_DIR = BASE_DIR / "data"
 DB_FILE = DATA_DIR / "lwom.db"
 
-TOKEN_HOURS = 24
+TOKEN_HOURS = 720
