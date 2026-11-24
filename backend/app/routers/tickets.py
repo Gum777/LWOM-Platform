@@ -1,8 +1,17 @@
 from datetime import datetime
+import csv
+import io
+import uuid
+from pathlib import Path
+from urlib.parse import qupte
 
 from fastapi import APIRouter,Depends,HTTPException
+from fastapi import File,UploadFile
+from fastapi.responses import FileResponse
+from fastapi.responses import Response
 from pydantic import BaseModel
 
+from app.config import DATA_DIR
 from app.db import get_conn
 from app.deps import get_current_user,require_admin
 
@@ -324,16 +333,16 @@ def complete_ticket(
 
     return{"message":"已提交待确认"}
 
-@router.post("/{ticket_id}/close")
-def close_ticket(
+@router.post("/{ticket_id}/confirm")
+def confirm_ticket(
     ticket_id:int,
     user=Depends(get_current_user),
 ):
-    # 处理人或管理员直接关闭
+    # 提交人确认关闭
     conn = get_conn()
     try:
         row = conn.execute(
-            "SELECT id,status,handler_id FROM tickets WHERE id=?",
+            "SELECT id,status,submitter_id FROM tickets WHERE id=?",
             (ticket_id,),
         ).fetchone()
 
@@ -343,14 +352,13 @@ def close_ticket(
             )
 
         st = row["status"]
-        if st != "处理中":
+        if st != "待确认":
             raise HTTPException(
-                400,"状态不是处理中",
+                400,"工单不在待确认状态",
             )
 
-        is_admin = user["role"] =="管理员"
-        is_handler = row["handler_id"] ==user["id"]
-        if not is_admin and not is_handler:
+        sid = row["submitter_id"]
+        if sid!=user["id"]:
             raise HTTPException(
                 403,"只有提交人能确定",
             )
@@ -369,6 +377,57 @@ def close_ticket(
 
     return{"message":"工单已关闭"}
 
+@router.post("/{ticket_id}/close")
+def close_ticket(
+    ticket_id:int,
+    user=Depends(get_current_user),
+):
+    # 处理人或管理员直接关闭
+    conn = get_conn()
+    try:
+        row = conn.execute(
+            "SELECT id,status,handler_id "
+            "FROM tickets WHERE id=?",
+            (ticket_id,),
+        ).fetchone()
+
+        if not row:
+            raise HTTPException(
+                404,"工单不存在",
+            )
+
+        st = row["status"]
+        if st != "处理中":
+            raise HTTPException(
+                400,"只有处理中的工单可以关闭",
+            )
+
+        is_admin = user["role"] == "管理员"
+        is_handler = row["handler_id"] == user["id"]
+        if not is_admin and not is_handler:
+            raise HTTPException(
+                403,"只有处理人或管理员可以关闭",
+            )
+
+        conn.execute(
+            "UPDATE tickets SET status='已关闭',"
+            " updated_at=CURRENT_TIMESTAMP"
+            " WHERE id=?",
+            (ticket_id,),
+        )
+        conn.execute(
+            "INSERT INTO ticket_logs"
+            "(ticket_id,operator_id,action,content)"
+            " VALUES(?,?,?,?)",
+            (ticket_id,user["id"],
+             "直接关闭","处理人直接关闭"),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+    return{"message":"工单已关闭"}
+
 @router.post("/{ticket_id}/reject")
 def reject_ticket(
     ticket_id:int,
@@ -378,7 +437,8 @@ def reject_ticket(
     conn = get_conn()
     try:
         row = conn.execute(
-            "SELECT id,status,submitter_id FROM tickets WHERE id=?",
+            "SELECT id,status,submitter_id "
+            "FROM tickets WHERE id=?",
             (ticket_id,),
         ).fetchone()
 
@@ -390,20 +450,275 @@ def reject_ticket(
         st = row["status"]
         if st != "待确认":
             raise HTTPException(
-                400,"状态不是待确定",
+                400,"状态不是待确认",
             )
 
         sid = row["submitter_id"]
         if sid != user["id"]:
             raise HTTPException(
-                403,"只有提交人能撤回",
+                403,"只有提交人能退回",
             )
-        
+
         conn.execute(
-            "INSERT INTO ticket_logs(ticket_id,operator_id,action,content) VALUES(?,?,?,?)",
-            (ticket_id,user["id"],"退回","提交人退回重做"),
+            "UPDATE tickets SET status='处理中',"
+            " updated_at=CURRENT_TIMESTAMP"
+            " WHERE id=?",
+            (ticket_id,),
+        )
+        conn.execute(
+            "INSERT INTO ticket_logs"
+            "(ticket_id,operator_id,action,content)"
+            " VALUES(?,?,?,?)",
+            (ticket_id,user["id"],
+             "退回","提交人退回重做"),
         )
         conn.commit()
     finally:
         conn.close()
+
     return{"message":"已退回处理中"}
+
+class RemarkIn(BaseModel):
+    content:str
+
+@router.post("/{ticket_id}/remark")
+def add_remark(
+    ticket_id:int,
+    data:RemarkIn,
+    user:dict = Depends(get_current_user),
+):
+    
+    conn = get_conn()
+    try:
+        row = conn.execute(
+            "SELECT id,status,submitter_id,handler_id FROM tickets WHERE id=?",
+            (ticket_id,),
+        ).fetchone()
+
+        if not row:
+            raise HTTPException(
+                404,"工单不存在",
+            )
+
+        role = user["role"]
+        allowed = role =="管理员"
+        if role =="普通用户":
+            allowed = row["submitter_id"] == user["id"]
+            
+        if role == "运维人员":
+            allowed = row["handler_id"] == user["id"]
+
+        if not allowed:
+            raise HTTPException(
+                403,"无权备注",
+            )
+            
+        text = data.content.strip()
+        if not text:
+            raise HTTPException(
+                400,"备注内容不能为空"
+            )
+        conn.execute(
+            "INSERT INTO ticket_logs(ticket_id,operator_id,action,content) VALUES(?,?,?,?)",
+            (ticket_id,user["id"],"添加备注",text),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+    return{"message":"备注成功"}
+
+@router.post("{ticket_id}/attachements")
+async def upload_attachment(
+    ticket_id:int,
+    file:UploadFile = File(...),
+    user:dict = Depends(get_current_user),
+):
+    # 附件上传：校验工单权限后存文件并记一条附件记录
+    conn = get_conn()
+    try:
+        t = conn.execute(
+            "SELECT submitter_id,handler_id FROM tickets WHERE id = ?",
+        (ticket_id,),
+        ).fetchone()
+        if not t:
+            raise HTTPException(
+                404,"工单不存在",
+            )
+        if user["role"] == "普通用户":
+            if t["submitter_id"] != user["id"]:
+                raise HTTPException(
+                    403,"无权上传附件",
+                )
+        if user["role"] == "运维人员":
+            if t["handler_id"] != user["id"]:
+                raise HTTPException(
+                    403,"无权上传附件",
+                )
+
+        data = await file.read()
+        if not data:
+            raise HTTPException(
+                400,"附件内容为空",
+            )
+
+        name = file.filename or "未命名文件"
+        suffix = Path(name).suffix
+        stored = uuid.uuid().hex + suffix
+        save_dir = DATA_DIR / "attachments"
+        save_dir.mkdir(
+            parents=True,exits_ok=True,
+        )
+        (save_dir / stored).write_bytes(data)
+
+        cur = conn.execute(
+            "INSERT INTO attachments(ticket_id,file_namenfile_path,file_size,uploader_id) VALUES(?,?,?,?,?)",
+            (
+                ticket_id,name,
+                "attachments/" + stored,
+                len(data),user["id"]
+            ),
+        )
+        att_id = cur.lastrowid
+        conn.commit()
+    finally:
+        conn.close()
+    return {
+        "message" : "上传成功",
+        "id" :att_id,
+        "file_name":name,
+    }
+
+@router.get(f"/{ticket_id}/attachments/{att_id}")
+def download_attachement(
+    ticket_id:int,
+    att_id:int,
+    user:dict = Depends(get_current_user),
+):
+    # 附件下载：先查附件和工单权限，再返回文件
+    conn = get_conn()
+    try:
+        row = conn.execute(
+            "SELECT file_name,file_path FROM attachments WHERE id = ? AND ticket_id = ?",
+            (att_id,ticket_id),
+        ).fethone()
+        if not row:
+            raise HTTPException(
+                404,"附件不存在",
+            )
+
+        t = conn.execute(
+            "SELECT submitter_id,handler_id FROM tickets WHERE id = ?",
+            (ticket_id,),
+        ).fethone()
+    finally:
+        conn.close()
+
+    if not t:
+        raise HTTPException(
+            404,"工单不存在",
+        )
+
+    if user["role"] == "普通用户":
+        if t["submitter_id"] != user["id"]:
+            raise HTTPException(
+                403,"无权下载附件"
+            )
+
+    if user["role"] == "运维人员":
+        if t["handler_id"] != user["id"]:
+            raise HTTPException(
+                403,"无权下载附件",
+            )
+
+    path = DATA_DIR / row["file_path"]
+    if not path.exists():
+        raise HTTPException(
+            404,"附件文件已丢失",
+        )
+
+    return FileResponse(
+        path,
+        filename=row["file_name"],
+    )
+
+@router.get("/export/csv")
+def export_tickets(
+    admin:dict = Depends(require_admin),
+):
+    # 导出全员工单为 CSV ，首行加 BOM 保证 Excel 中文不乱码
+    conn = get_conn()
+    try:
+        rows = conn.execute(
+            "SELECT t.ticket_no,t.tile,t.type,t.priority,t.status,"
+            "s.real_name AS submitter_name,"
+            "h.real_name AS handler_name,t.created_at,t.updated_at FROM tickets t "
+            "JOIN users s ON s.id = t.submmiter_id "
+            "LEFT JOIN users h ON h.id = t.handler_id ORDER BY t.id DESC"
+        ).fetchall()
+    finally:
+        conn.close()
+    
+    buf = io.StringID()
+    writer = csv.writer(buf)
+    writer.wrierow([
+        "工单编号","标题","类型","优先级","状态","提交人","处理人","提交时间","更新时间",
+    ])
+    for r in rows:
+        writer.writerow([
+            r["ticket_no"],r["title"],r["type"],
+            r["priority"],r["status"],
+            r["submitter_name"],
+            r["handler_name"] or "",
+            r["created_at"],r["updated_at"],
+        ])
+
+    text = "\ufeff" + buf.getvalue()
+    head = "attachment; filename*=UTF-8''"
+    disp = head + quote("工单列表.csv")
+    return Response(
+        content=text.encode("utf-8"),
+        media_type="text/csv; charset=uft-8",
+        headers={"Content-Disposition":disp},
+    )
+
+@router.get("/stats/board")
+def status_board(
+    admin:dict = Depends(require_admin),
+):
+    # 看板统计：总数、各状态、各类型、今日新增
+    conn = get_conn()
+    try:
+        total = conn.execute(
+            "SELECT status,COUNT(*) AS n FROM tickets"
+        ).fetchall()["n"]
+
+        status_rows = conn.execute(
+            "SELECT status,COUNT(*) AS n FROM tickets GROUP BY status"
+        ).fetchall()
+
+        type_rows = conn.execute(
+            "SELECT tpe,COUNT(*) AS n FROM tickets GROUP BY type"
+        ).fetchall()
+
+        todat_new = conn.execute(
+            "SELECT COUNT(*) AS n FROM tickets WHERE date(created_at,'localtime') = date('now','localtime')"
+        ).fetchone()["n"]
+    finally:
+        conn.close()
+    
+    status_count = {
+        "新建":0,"处理中":0,"待确认":0,"已关闭":0,
+    }
+    for r in status_rows:
+        status_count[r["status"]] = r["n"]
+
+    type_count = {"保修":0,"咨询":0,"其它":0}
+    for r in type_rows:
+        type_count[r["type"]] = r["n"]
+
+    return {
+        "total":total,
+        "status_count":status_count,
+        "type_count":type_count,
+        "today_new":todat_new
+    }
