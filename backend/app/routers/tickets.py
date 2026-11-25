@@ -3,7 +3,7 @@ import csv
 import io
 import uuid
 from pathlib import Path
-from urlib.parse import qupte
+from urllib.parse import quote
 
 from fastapi import APIRouter,Depends,HTTPException
 from fastapi import File,UploadFile
@@ -527,7 +527,7 @@ def add_remark(
         conn.close()
     return{"message":"备注成功"}
 
-@router.post("{ticket_id}/attachements")
+@router.post("/{ticket_id}/attachments")
 async def upload_attachment(
     ticket_id:int,
     file:UploadFile = File(...),
@@ -563,15 +563,15 @@ async def upload_attachment(
 
         name = file.filename or "未命名文件"
         suffix = Path(name).suffix
-        stored = uuid.uuid().hex + suffix
+        stored = uuid.uuid4().hex + suffix
         save_dir = DATA_DIR / "attachments"
         save_dir.mkdir(
-            parents=True,exits_ok=True,
+            parents=True,exist_ok=True,
         )
         (save_dir / stored).write_bytes(data)
 
         cur = conn.execute(
-            "INSERT INTO attachments(ticket_id,file_namenfile_path,file_size,uploader_id) VALUES(?,?,?,?,?)",
+            "INSERT INTO attachments(ticket_id,file_name,file_path,file_size,uploader_id) VALUES(?,?,?,?,?)",
             (
                 ticket_id,name,
                 "attachments/" + stored,
@@ -588,7 +588,7 @@ async def upload_attachment(
         "file_name":name,
     }
 
-@router.get(f"/{ticket_id}/attachments/{att_id}")
+@router.get("/{ticket_id}/attachments/{att_id}")
 def download_attachement(
     ticket_id:int,
     att_id:int,
@@ -600,7 +600,7 @@ def download_attachement(
         row = conn.execute(
             "SELECT file_name,file_path FROM attachments WHERE id = ? AND ticket_id = ?",
             (att_id,ticket_id),
-        ).fethone()
+        ).fetchone()
         if not row:
             raise HTTPException(
                 404,"附件不存在",
@@ -609,7 +609,7 @@ def download_attachement(
         t = conn.execute(
             "SELECT submitter_id,handler_id FROM tickets WHERE id = ?",
             (ticket_id,),
-        ).fethone()
+        ).fetchone()
     finally:
         conn.close()
 
@@ -649,18 +649,18 @@ def export_tickets(
     conn = get_conn()
     try:
         rows = conn.execute(
-            "SELECT t.ticket_no,t.tile,t.type,t.priority,t.status,"
+            "SELECT t.ticket_no,t.title,t.type,t.priority,t.status,"
             "s.real_name AS submitter_name,"
             "h.real_name AS handler_name,t.created_at,t.updated_at FROM tickets t "
-            "JOIN users s ON s.id = t.submmiter_id "
+            "JOIN users s ON s.id = t.submitter_id "
             "LEFT JOIN users h ON h.id = t.handler_id ORDER BY t.id DESC"
         ).fetchall()
     finally:
         conn.close()
     
-    buf = io.StringID()
+    buf = io.StringIO()
     writer = csv.writer(buf)
-    writer.wrierow([
+    writer.writerow([
         "工单编号","标题","类型","优先级","状态","提交人","处理人","提交时间","更新时间",
     ])
     for r in rows:
@@ -677,7 +677,7 @@ def export_tickets(
     disp = head + quote("工单列表.csv")
     return Response(
         content=text.encode("utf-8"),
-        media_type="text/csv; charset=uft-8",
+        media_type="text/csv; charset=utf-8",
         headers={"Content-Disposition":disp},
     )
 
@@ -689,15 +689,15 @@ def status_board(
     conn = get_conn()
     try:
         total = conn.execute(
-            "SELECT status,COUNT(*) AS n FROM tickets"
-        ).fetchall()["n"]
+            "SELECT COUNT(*) AS n FROM tickets"
+        ).fetchone()["n"]
 
         status_rows = conn.execute(
             "SELECT status,COUNT(*) AS n FROM tickets GROUP BY status"
         ).fetchall()
 
         type_rows = conn.execute(
-            "SELECT tpe,COUNT(*) AS n FROM tickets GROUP BY type"
+            "SELECT type,COUNT(*) AS n FROM tickets GROUP BY type"
         ).fetchall()
 
         todat_new = conn.execute(
